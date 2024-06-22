@@ -23,6 +23,7 @@ STORAGE_NAME=sawordpress$id
 az group create --name $RG_NAME --location $LOCATION
 
 # create vnet and 2 subnets (one for Wordpress and one for our DB)
+# subnet-capps needs to be delegated to Microsoft.App/environments 
 az network vnet create --name vnet-wordpress --resource-group $RG_NAME --location $LOCATION
 az network vnet subnet create --resource-group $RG_NAME --vnet-name vnet-wordpress --name subnet-capps --address-prefixes 10.0.0.0/23
 az network vnet subnet create --resource-group $RG_NAME --vnet-name vnet-wordpress --name subnet-db --address-prefixes 10.0.2.0/28
@@ -51,7 +52,8 @@ az mysql flexible-server create --location $LOCATION --resource-group $RG_NAME \
 # create azure storage account, a blob and extract primary access key
 az storage account create --name $STORAGE_NAME \
     --resource-group $RG_NAME --location $LOCATION \
-    --sku Standard_LRS --kind StorageV2
+    --sku Standard_LRS --kind StorageV2 \
+    --allow-blob-public-access
 az storage container create --name "uploads" \
     --public-access blob \
     --account-name $STORAGE_NAME \
